@@ -1,5 +1,7 @@
 import * as marked from 'marked';
 import hljs from 'highlight.js';
+import VueJsonPretty from 'vue-json-pretty';
+import isEmpty from 'lodash.isempty';
 import HTTP from './http';
 import Messages from './messages.vue';
 
@@ -36,6 +38,8 @@ const storeOffsetInUrl = (offset) => {
 };
 
 export const annotationMixin = {
+  components: { VueJsonPretty },
+
   data() {
     return {
       pageNumber: 0,
@@ -50,7 +54,8 @@ export const annotationMixin = {
       offset: getOffsetFromUrl(window.location.href),
       picked: 'all',
       count: 0,
-      isActive: false,
+      isMetadataActive: false,
+      isAnnotationGuidelineActive: false,
     };
   },
 
@@ -179,6 +184,20 @@ export const annotationMixin = {
       });
     },
 
+    documentMetadata() {
+      const document = this.docs[this.pageNumber];
+      if (document == null || document.meta == null) {
+        return null;
+      }
+
+      const metadata = JSON.parse(document.meta);
+      if (isEmpty(metadata)) {
+        return null;
+      }
+
+      return metadata;
+    },
+
     id2label() {
       const id2label = {};
       for (let i = 0; i < this.labels.length; i++) {
@@ -254,6 +273,7 @@ export const uploadMixin = {
     },
 
     download() {
+      this.isLoading = true;
       const headers = {};
       if (this.format === 'csv') {
         headers.Accept = 'text/csv; charset=utf-8';
@@ -276,8 +296,10 @@ export const uploadMixin = {
         link.href = url;
         link.setAttribute('download', 'file.' + this.format); // or any other extension
         document.body.appendChild(link);
+        this.isLoading = false;
         link.click();
       }).catch((error) => {
+        this.isLoading = false;
         this.handleError(error);
       });
     },
