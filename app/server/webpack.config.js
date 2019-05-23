@@ -16,7 +16,10 @@ module.exports = {
         'stats': './static/js/stats.js',
         'label': './static/js/label.js',
         'guideline': './static/js/guideline.js',
+<<<<<<< HEAD
         'user_management': './static/js/user_management.js',
+=======
+>>>>>>> parent of 3759edb... Add button to delete documents on dataset page
         'demo_text_classification': './static/js/demo/demo_text_classification.js',
         'demo_named_entity': './static/js/demo/demo_named_entity.js',
         'demo_translation': './static/js/demo/demo_translation.js',
